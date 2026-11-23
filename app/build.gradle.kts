@@ -6,11 +6,11 @@ android {
     namespace = "ai.omnicam.studio"
     compileSdk = 35
     defaultConfig {
-        applicationId = "ai.omnicam.studio.test"
+        applicationId = "ai.omnicam.studio"
         minSdk = 28
         targetSdk = 35
-        versionCode = 4
-        versionName = "5.0-test.1"
+        versionCode = 5
+        versionName = "5.1"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
