@@ -35,13 +35,12 @@ class MainActivity : Activity() {
             setPadding(20, 24, 20, 12)
             setBackgroundColor(Color.rgb(12, 18, 34))
         }
-        val title = TextView(this).apply {
+        root.addView(TextView(this).apply {
             text = "OmniCam AI 5.0"
             textSize = 27f
             setTextColor(Color.WHITE)
             gravity = Gravity.CENTER
-        }
-        root.addView(title)
+        })
         status = TextView(this).apply {
             text = "Android camera studio • Local-only preview"
             setTextColor(Color.LTGRAY)
@@ -72,17 +71,17 @@ class MainActivity : Activity() {
             }
             root.addView(line)
         }
-        row("Photo" to { pick("image/*", PICK_IMAGE) }, "Video" to { pick("video/*", PICK_VIDEO) }, "Camera" to {
-            startActivityForResult(Intent(MediaStore.ACTION_IMAGE_CAPTURE), TAKE_PHOTO)
-        })
+        row("Photo" to { pick("image/*", PICK_IMAGE) },
+            "Video" to { pick("video/*", PICK_VIDEO) },
+            "Camera" to { startActivityForResult(Intent(MediaStore.ACTION_IMAGE_CAPTURE), TAKE_PHOTO) })
         row("Natural" to { effect(0) }, "Noir" to { effect(1) }, "Vintage" to { effect(2) })
         row("Text overlay" to { editCaption() }, "Save image" to { saveImage() })
-        val note = TextView(this).apply {
-            text = "Prototype: previews media inside OmniCam. It does NOT replace the camera in other apps."
+        row("REMOVE MEDIA" to { confirmRemoveMedia() })
+        root.addView(TextView(this).apply {
+            text = "Remove Media clears the preview only; original gallery files stay safe. Prototype: does NOT replace the camera in other apps."
             setTextColor(Color.LTGRAY)
             textSize = 12f
-        }
-        root.addView(note)
+        })
         setContentView(root)
     }
 
@@ -131,6 +130,32 @@ class MainActivity : Activity() {
         picture.setImageBitmap(bitmap)
         videoMode = false
         status.text = "Image source loaded"
+    }
+
+    private fun confirmRemoveMedia() {
+        if (currentBitmap == null && !videoMode) {
+            status.text = "No picture or video selected"
+            return
+        }
+        android.app.AlertDialog.Builder(this)
+            .setTitle("Remove selected media?")
+            .setMessage("This clears the preview. Your original picture or video will NOT be deleted from your phone.")
+            .setPositiveButton("Remove") { _, _ -> clearMedia() }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun clearMedia() {
+        video.stopPlayback()
+        video.setVideoURI(null)
+        video.visibility = View.GONE
+        picture.setImageDrawable(null)
+        picture.clearColorFilter()
+        picture.visibility = View.VISIBLE
+        currentBitmap = null
+        selectedUri = null
+        videoMode = false
+        status.text = "Media removed from preview"
     }
 
     private fun effect(mode: Int) {
