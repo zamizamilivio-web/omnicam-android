@@ -9,7 +9,14 @@ android {
         applicationId = "ai.omnicam.studio"
         minSdk = 28
         targetSdk = 35
-        versionCode = 2
-        versionName = "5.0-alpha.2"
+        versionCode = 3
+        versionName = "5.0-alpha.3"
     }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+kotlin {
+    jvmToolchain(17)
 }
